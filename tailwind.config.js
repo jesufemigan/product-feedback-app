@@ -11,13 +11,29 @@ module.exports = {
       fontFamily: {
         barlow: ["var(--font-barlow)", ...fontFamily.sans],
       },
+      backgroundImage: {
+        mobileProfile:
+          "url('../public/assets/suggestions/mobile/background-header.png')",
+        tabletProfile:
+          "url('../public/assets/suggestions/tablet/background-header.png)",
+        desktopProfile:
+          "url('../public/assets/suggestions/desktop/background-header.png)",
+      },
+      gridTemplateColumns: {
+        half: "1fr 2fr",
+      },
     },
     colors: {
-      blue: "#62BCFA",
-      pink: "#AD1FEA",
+      secondaryBlue: "#62BCFA",
       orange: "#F49F85",
-      light: "#F2F4FF",
-      activeColor: "#4661E6",
+      purple: "#ad1fea",
+      primaryBlue: "#4661e6",
+      primaryGray: "#373f68",
+      secondaryGray: "#3a4374",
+      accentGray: "#647196",
+      primaryWhite: "#fff",
+      secondaryWhite: "#f2f4ff",
+      accentWhite: "#f7f8fd",
     },
   },
   plugins: [],
