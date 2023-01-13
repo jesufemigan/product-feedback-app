@@ -1,5 +1,7 @@
 import { useLocalContext } from "../context/localContext";
 
+import Link from "next/link";
+
 const SideBar = () => {
   const allCategories = ["All", "UI", "UX", "Enhancement", "Bug", "Feature"];
   const roadMaps = [
@@ -43,7 +45,9 @@ const SideBar = () => {
       <div className="p-6 bg-primaryWhite rounded-[10px]">
         <span className="flex justify-between mb-6">
           <h1>Roadmap</h1>
-          <p className="text-primaryBlue">View</p>
+          <Link className="text-primaryBlue" href="roadmap">
+            View
+          </Link>
         </span>
 
         <div>

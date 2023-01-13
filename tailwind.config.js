@@ -22,6 +22,9 @@ module.exports = {
       gridTemplateColumns: {
         half: "1fr 2fr",
       },
+      boxShadow: {
+        box: "0px 10px 40px -7px rgba(55, 63, 104, 0.350492)",
+      },
     },
     colors: {
       secondaryBlue: "#62BCFA",

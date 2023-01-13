@@ -22,7 +22,7 @@ const FeedbackContainer = () => {
           <p>Add Feedback</p>
         </button>
       </div>
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-3 w-[90%] md:w-auto mx-auto">
         <Feedback />
         <Feedback />
         <Feedback />
