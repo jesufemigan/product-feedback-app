@@ -1,0 +1,52 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:/Users/hp/Documents/SQLite-Databases/product-feeback.db"
+}
+
+model User {
+  id Int @id @default(autoincrement())
+  name String? 
+  email String @unique
+  password String
+  feebacks Feedback[]
+  replies Reply[]
+  comments Comment[]
+}
+
+model Feedback {
+  id Int @id @default(autoincrement())
+  title String
+  detail String
+  Category String
+  status String @default("Suggestion")
+  votes Int
+  author User @relation(fields: [authorId], references: [id])
+  authorId Int
+  comments Comment[]
+}
+
+model Comment {
+  id Int @id @default(autoincrement())
+  content String
+  replies Reply[]
+  author User @relation(fields: [authorId], references: [id])
+  authorId Int
+  feedback Feedback @relation(fields: [feedbackId], references: [id])
+  feedbackId Int
+}
+
+model Reply {
+  id Int @id @default(autoincrement())
+  content String
+  author User @relation(fields: [authorId], references: [id])
+  authorId Int
+  comment Comment @relation(fields: [commentId], references: [id])
+  commentId Int
+}

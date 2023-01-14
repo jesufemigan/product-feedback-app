@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import iconSuggestion from "../public/assets/suggestions/icon-suggestions.svg";
 import iconPlus from "../public/assets/shared/icon-plus.svg";
 import Feedback from "./Feedback";
@@ -17,10 +18,12 @@ const FeedbackContainer = () => {
           <strong>Most Upvotes</strong>
         </span>
 
-        <button className="flex items-center bg-purple rounded-[10px] py-2 px-4">
-          <Image src={iconPlus} alt="add Feedback" />
-          <p>Add Feedback</p>
-        </button>
+        <Link href="/newFeedback">
+          <button className="flex items-center bg-purple rounded-[10px] py-2 px-4">
+            <Image src={iconPlus} alt="add Feedback" />
+            <p>Add Feedback</p>
+          </button>
+        </Link>
       </div>
       <div className="flex flex-col gap-3 w-[90%] md:w-auto mx-auto">
         <Feedback />
