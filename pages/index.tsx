@@ -1,10 +1,19 @@
+import { trpc } from "../utils/trpc";
+
 import Head from "next/head";
-import Image from "next/image";
-import { Inter } from "@next/font/google";
-import styles from "../styles/Home.module.css";
-import Layout from "../components/Layout";
 
 export default function Home() {
+  // const hello = trpc.hello.useQuery({ text: '10' })
+  const user = trpc.user.login.useQuery({
+    name: "Femi",
+    email: "oladam.om",
+    password: "123",
+  });
+  const users = trpc.user.allUser.useQuery();
+  if (!user.data || !users.data) {
+    return <div>Loading...</div>;
+  }
+  console.log(users);
   return (
     <>
       <Head>
@@ -13,6 +22,12 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
+      <p>{user.data.name}</p>
+      <p>{user.data.email}</p>
+      <p>{user.data.password}</p>
+      {users.data.map((c) => (
+        <p key={c.id}>{c.name}</p>
+      ))}
     </>
   );
 }

@@ -1,3 +1,6 @@
+import type { AppType } from "next/app";
+import { trpc } from "../utils/trpc";
+
 import "../styles/globals.css";
 import type { AppProps } from "next/app";
 import { Barlow_Semi_Condensed } from "@next/font/google";
@@ -10,7 +13,7 @@ const barlow = Barlow_Semi_Condensed({
   variable: "--font-barlow",
 });
 
-export default function App({ Component, pageProps }: AppProps) {
+const App: AppType = ({ Component, pageProps }: AppProps) => {
   return (
     <LocalProvider>
       <Layout>
@@ -20,4 +23,6 @@ export default function App({ Component, pageProps }: AppProps) {
       </Layout>
     </LocalProvider>
   );
-}
+};
+
+export default trpc.withTRPC(App);
