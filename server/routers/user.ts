@@ -3,7 +3,10 @@ import bcrypt from "bcrypt";
 import { user } from "../../prisma/script";
 import { z } from "zod";
 
-const login = publicProcedure
+import jwt from "jsonwebtoken";
+import { TRPCError } from "@trpc/server";
+
+const signup = publicProcedure
   .input(
     z.object({
       name: z.string(),
@@ -19,7 +22,37 @@ const login = publicProcedure
         password: hashPassword(input.password),
       },
     });
-    return newUser;
+    return {
+      email: newUser.email,
+      token: generateToken(newUser.email, newUser.id),
+    };
+  });
+
+const login = publicProcedure
+  .input(
+    z.object({
+      email: z.string(),
+      password: z.string(),
+    })
+  )
+  .query(async ({ input }) => {
+    const userExists = await user.findUnique({
+      where: {
+        email: input.email,
+      },
+    });
+
+    if (userExists) {
+      return {
+        email: userExists.email,
+        token: generateToken(userExists.email, userExists.id),
+      };
+    } else {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "Please sign up!",
+      });
+    }
   });
 
 const hashPassword = (password: string): string => {
@@ -28,7 +61,12 @@ const hashPassword = (password: string): string => {
   return hashedPassword;
 };
 
+const generateToken = (email: string, id: number) => {
+  return jwt.sign({ email, id }, process.env.JWT_SECRET, { expiresIn: "30d" });
+};
+
 export const userRouter = router({
+  signup,
   login,
   allUser: publicProcedure.query(async () => {
     const users = await user.findMany();

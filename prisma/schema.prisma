@@ -10,43 +10,56 @@ datasource db {
   url      = "file:/Users/hp/Documents/SQLite-Databases/product-feeback.db"
 }
 
-model User {
-  id Int @id @default(autoincrement())
-  name String? 
-  email String @unique
-  password String
-  feebacks Feedback[]
-  replies Reply[]
-  comments Comment[]
-}
-
 model Feedback {
-  id Int @id @default(autoincrement())
-  title String
-  detail String
-  Category String
+  id       String     @id @default(uuid())
+  title    String
+  detail  String
+  category String
   status String @default("Suggestion")
-  votes Int
-  author User @relation(fields: [authorId], references: [id])
-  authorId Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  author   User    @relation(fields: [authorId], references: [id])
+  authorId String
   comments Comment[]
+  upvotes  Upvote[]
 }
 
 model Comment {
-  id Int @id @default(autoincrement())
-  content String
-  replies Reply[]
-  author User @relation(fields: [authorId], references: [id])
-  authorId Int
-  feedback Feedback @relation(fields: [feedbackId], references: [id])
-  feedbackId Int
+  id        String     @id @default(uuid())
+  content   String
+  createdAt DateTime @default(now())
+  author    User    @relation(fields: [authorId], references: [id])
+  authorId  String
+  feedback  Feedback @relation(fields: [feedbackId], references: [id])
+  feedbackId  String
+  replies   Reply[]
 }
 
 model Reply {
-  id Int @id @default(autoincrement())
-  content String
-  author User @relation(fields: [authorId], references: [id])
-  authorId Int
-  comment Comment @relation(fields: [commentId], references: [id])
-  commentId Int
+  id        String     @id @default(uuid())
+  content   String
+  author    User    @relation(fields: [authorId], references: [id])
+  authorId  String
+  comment   Comment @relation(fields: [commentId], references: [id])
+  commentId String
+}
+
+model Upvote {
+  id        String     @id @default(uuid())
+  user      User    @relation(fields: [userId], references: [id])
+  userId    String
+  feedback  Feedback @relation(fields: [feedbackId], references: [id])
+  feedbackId String
+  createdAt DateTime @default(now())
+}
+
+model User {
+  id        String     @id @default(uuid())
+  name      String
+  email     String   @unique
+  password  String
+  feedbacks Feedback[]
+  comments  Comment[]
+  replies   Reply[]
+  upvotes   Upvote[]
 }
