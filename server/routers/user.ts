@@ -14,7 +14,7 @@ const signup = publicProcedure
       password: z.string(),
     })
   )
-  .query(async ({ input }) => {
+  .mutation(async ({ ctx, input }) => {
     const newUser = await user.create({
       data: {
         name: input.name,
@@ -24,7 +24,7 @@ const signup = publicProcedure
     });
     return {
       email: newUser.email,
-      token: generateToken(newUser.email, newUser.id),
+      token: generateToken(newUser.email, parseInt(newUser.id)),
     };
   });
 
@@ -35,22 +35,34 @@ const login = publicProcedure
       password: z.string(),
     })
   )
-  .query(async ({ input }) => {
+  .mutation(async ({ input, ctx }) => {
     const userExists = await user.findUnique({
       where: {
         email: input.email,
       },
     });
 
-    if (userExists) {
-      return {
-        email: userExists.email,
-        token: generateToken(userExists.email, userExists.id),
-      };
-    } else {
+    if (!userExists) {
       throw new TRPCError({
         code: "FORBIDDEN",
         message: "Please sign up!",
+      });
+    }
+
+    const isPasswordCorrect = bcrypt.compareSync(
+      input.password,
+      userExists.password
+    );
+
+    if (isPasswordCorrect) {
+      return {
+        email: userExists.email,
+        token: generateToken(userExists.email, parseInt(userExists.id)),
+      };
+    } else {
+      throw new TRPCError({
+        code: "CONFLICT",
+        message: "Input correct password",
       });
     }
   });
@@ -72,19 +84,4 @@ export const userRouter = router({
     const users = await user.findMany();
     return users;
   }),
-  // login: publicProcedure
-  //   .input(
-  //     z.object({
-  //       name: z.string(),
-  //       email: z.string(),
-  //       password: z.string()
-  //     })
-  //   )
-  //   .query(({ input }) => {
-  //     return {
-  //       name: input.name,
-  //       email: input.email,
-  //       password: input.password
-  //     }
-  //   })
 });

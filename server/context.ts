@@ -11,9 +11,9 @@ export async function createContext({
   req,
   res,
 }: trpcNext.CreateNextContextOptions) {
-  async function getUserFromHeader() {
-    if (req.headers.authorization) {
-      const token = req.headers.authorization.split(" ")[1] as string;
+  function getUserFromHeader() {
+    if (req.headers.authorization !== "undefined") {
+      const token = req.headers.authorization?.split(" ")[1] as string;
 
       const user = jwt.verify(token, process.env.JWT_SECRET) as JwtPayload;
 
@@ -23,9 +23,9 @@ export async function createContext({
     return null;
   }
 
-  const user = await getUserFromHeader();
+  const user = getUserFromHeader();
 
-  return { user };
+  return { user, req, res };
 }
 
 export type Context = trpc.inferAsyncReturnType<typeof createContext>;

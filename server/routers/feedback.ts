@@ -2,6 +2,12 @@ import { feedback, comment, upvote } from "../../prisma/script";
 import { z } from "zod";
 import { publicProcedure, router } from "../trpc";
 import { protectedProcedure } from "../middlewares/auth";
+import jwt from "jsonwebtoken";
+import { TRPCError } from "@trpc/server";
+
+const generateToken = (email: string, id: number) => {
+  return jwt.sign({ email, id }, process.env.JWT_SECRET, { expiresIn: "30d" });
+};
 
 const createFeedback = protectedProcedure
   .input(
@@ -12,6 +18,12 @@ const createFeedback = protectedProcedure
     })
   )
   .mutation(async ({ input, ctx }) => {
+    if (!ctx.user) {
+      new TRPCError({
+        code: "UNAUTHORIZED",
+        message: "Please sign in",
+      });
+    }
     await feedback.create({
       data: {
         title: input.title,
@@ -81,7 +93,7 @@ const getAllVotes = protectedProcedure.query(async () => {
   return allVotes;
 });
 
-const Feedback = router({
+export const feedbackRouter = router({
   createFeedback,
   getAllFeedbacks,
   addComments,

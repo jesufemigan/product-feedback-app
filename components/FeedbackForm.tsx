@@ -9,6 +9,14 @@ import iconUp from "../public/assets/shared/icon-arrow-up.svg";
 import { useState } from "react";
 import { useHandleOutsideClick } from "../hooks/handleOutsideClick";
 
+import { useForm, Resolver } from "react-hook-form";
+import { trpc } from "../utils/trpc";
+
+type FeedbackFormValues = {
+  title: string;
+  detail: string;
+};
+
 const FeedbackForm = () => {
   const [showDropDown, setShowDropDown] = useState(false);
 
@@ -17,6 +25,41 @@ const FeedbackForm = () => {
   };
 
   const ref = useHandleOutsideClick(closeDropDown);
+
+  const resolver: Resolver<FeedbackFormValues> = async (values) => {
+    return {
+      values: values.title ? values : {},
+      errors: !values.title
+        ? {
+            title: {
+              type: "required",
+              message: "Enter a title",
+            },
+            detail: {
+              type: "required",
+              message: "Enter a detail",
+            },
+          }
+        : {},
+    };
+  };
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FeedbackFormValues>({ resolver });
+
+  const createFeedback = trpc.feedback.createFeedback.useMutation();
+  console.log(createFeedback);
+
+  const onSubmit = handleSubmit((data) => {
+    createFeedback.mutateAsync({
+      title: data.title,
+      detail: data.detail,
+      category: "Feature",
+    });
+  });
 
   return (
     <div className="w-[70%] mx-auto">
@@ -36,7 +79,7 @@ const FeedbackForm = () => {
           Create New Feedback
         </h1>
 
-        <form className="flex flex-col gap-8">
+        <form className="flex flex-col gap-8" onSubmit={onSubmit}>
           <div className="flex flex-col gap-2">
             <label htmlFor="">
               <h3 className="text-primaryGray font-semibold">Feedback Title</h3>
@@ -47,6 +90,7 @@ const FeedbackForm = () => {
             <input
               type="text"
               className="bg-secondaryWhite w-full rounded-md py-3 px-6"
+              {...register("title")}
             />
           </div>
           <div className="flex flex-col gap-2">
@@ -89,17 +133,19 @@ const FeedbackForm = () => {
           </div>
           <div className="flex flex-col gap-2">
             <label htmlFor="">
-              <h3 className="text-primaryGray font-semibold">Feedback Title</h3>
+              <h3 className="text-primaryGray font-semibold">
+                Feedback Detail
+              </h3>
               <p className="text-secondaryGray">
                 Include any specific comments on what should be improved, added,
                 etc.
               </p>
             </label>
             <textarea
-              name=""
               id=""
               rows={5}
               className="bg-secondaryWhite w-full rounded-md py-3 px-6 overflow-auto"
+              {...register("title")}
             ></textarea>
           </div>
 
@@ -107,7 +153,9 @@ const FeedbackForm = () => {
             <button className="bg-[#373F68] px-5 py-3 rounded-lg">
               Cancel
             </button>
-            <button className="bg-purple rounded-lg px-5">Add Feedback</button>
+            <button className="bg-purple rounded-lg px-5" type="submit">
+              Add Feedback
+            </button>
           </div>
         </form>
       </div>
